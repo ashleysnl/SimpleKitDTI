@@ -1,0 +1,359 @@
+name: "Debt-to-Income Ratio Calculator"
+slug: "debt-to-income-ratio-calculator"
+repo_name: "simplekit-dti-calculator"
+subdomain: "dti"
+
+seo:
+  page_title: "Debt-to-Income Ratio Calculator for Mortgage and Loan Planning"
+  meta_description: "Calculate your debt-to-income ratio, compare front-end vs back-end DTI, test a future mortgage payment, and see whether your ratio looks healthy, borderline, or stretched."
+  h1: "Debt-to-Income Ratio Calculator"
+
+calculator:
+  description: "Use this debt-to-income ratio calculator to estimate how much of your gross monthly income is already committed to debt payments, housing costs, or both. The tool is designed for practical planning: it helps users calculate a basic DTI, compare front-end and back-end DTI, test a future housing payment, and understand how their current debts may affect mortgage readiness, borrowing capacity, and monthly flexibility."
+  formula_notes: "Back-end DTI is calculated as total monthly debt obligations divided by gross monthly income. When the user enters a proposed housing payment and chooses to include it, the proposed housing payment is added to the debt total used for the ratio. Front-end DTI is calculated as proposed monthly housing cost divided by gross monthly income. Housing cost can include the main housing payment plus property taxes, heating, and the applicable portion of condo fees or HOA dues. Debts normally included in DTI-style planning estimates are housing payment, property tax, condo fees or HOA dues, heating when included in the housing assumption, car loans, student loans, credit card minimum payments, lines of credit, personal loans, child support, alimony, and other required monthly obligations. Items usually not included in standard DTI planning estimates are groceries, entertainment, discretionary spending, most utilities outside the housing model unless explicitly included, savings contributions, and insurance categories not already built into the housing payment assumption. This calculator is educational and uses general planning logic rather than lender-specific underwriting rules."
+
+inputs:
+  - id: "gross_monthly_income"
+    label: "Gross monthly income before tax"
+    type: "currency"
+    required: true
+    default: 6000
+    min: 0
+    step: 50
+    helper_text: "Enter your monthly income before tax, deductions, or benefits withholding."
+    group: "core"
+  - id: "dti_mode"
+    label: "Calculation focus"
+    type: "select"
+    required: true
+    default: "current-plus-proposed"
+    options:
+      - value: "current-only"
+        label: "Current debt only"
+      - value: "current-plus-proposed"
+        label: "Current debt plus a future housing payment"
+      - value: "proposed-only"
+        label: "Future housing payment only"
+    helper_text: "Choose whether you want a simple debt snapshot or a mortgage planning estimate."
+    group: "core"
+  - id: "scenario_name"
+    label: "Scenario name"
+    type: "text"
+    required: false
+    default: "Base scenario"
+    helper_text: "Optional label for sharing or comparing scenarios."
+    group: "core"
+  - id: "province_or_region"
+    label: "Province or region"
+    type: "select"
+    required: false
+    default: "canada-general"
+    options:
+      - value: "canada-general"
+        label: "Canada - general estimate"
+      - value: "alberta"
+        label: "Alberta"
+      - value: "british-columbia"
+        label: "British Columbia"
+      - value: "manitoba"
+        label: "Manitoba"
+      - value: "new-brunswick"
+        label: "New Brunswick"
+      - value: "newfoundland-and-labrador"
+        label: "Newfoundland and Labrador"
+      - value: "nova-scotia"
+        label: "Nova Scotia"
+      - value: "ontario"
+        label: "Ontario"
+      - value: "prince-edward-island"
+        label: "Prince Edward Island"
+      - value: "quebec"
+        label: "Quebec"
+      - value: "saskatchewan"
+        label: "Saskatchewan"
+      - value: "territories"
+        label: "Northern territories"
+      - value: "outside-canada"
+        label: "Outside Canada"
+    helper_text: "Used for copy personalization only, not lender-specific qualification rules."
+    group: "core"
+  - id: "include_current_housing"
+    label: "Include my current housing payment in back-end DTI"
+    type: "toggle"
+    required: false
+    default: true
+    helper_text: "Useful when you want a snapshot of your current obligations."
+    group: "housing"
+  - id: "current_housing_payment"
+    label: "Current monthly housing payment"
+    type: "currency"
+    required: false
+    default: 0
+    min: 0
+    step: 25
+    helper_text: "Rent or current mortgage payment. Leave blank or zero if not needed."
+    group: "housing"
+  - id: "include_proposed_housing"
+    label: "Include a proposed housing payment in back-end DTI"
+    type: "toggle"
+    required: false
+    default: true
+    helper_text: "Turn this on to test a future mortgage, rent, or housing cost scenario."
+    group: "housing"
+  - id: "proposed_housing_payment"
+    label: "Proposed monthly housing payment"
+    type: "currency"
+    required: false
+    default: 2200
+    min: 0
+    step: 25
+    helper_text: "Base housing payment to test for a future home or rental plan."
+    group: "housing"
+  - id: "property_taxes_monthly"
+    label: "Monthly property taxes"
+    type: "currency"
+    required: false
+    default: 0
+    min: 0
+    step: 10
+    helper_text: "Include only if you want taxes counted in the housing cost assumption."
+    group: "housing"
+  - id: "heating_monthly"
+    label: "Monthly heating cost used in housing estimate"
+    type: "currency"
+    required: false
+    default: 0
+    min: 0
+    step: 10
+    helper_text: "Useful for mortgage-style planning when heating is part of the housing qualification assumption."
+    group: "housing"
+  - id: "condo_fees_monthly"
+    label: "Monthly condo fees or HOA dues"
+    type: "currency"
+    required: false
+    default: 0
+    min: 0
+    step: 10
+    helper_text: "Enter the monthly amount if the property has condo fees or HOA dues."
+    group: "housing"
+  - id: "car_loans_monthly"
+    label: "Car loans and lease payments"
+    type: "currency"
+    required: false
+    default: 0
+    min: 0
+    step: 10
+    helper_text: "Required monthly vehicle payments."
+    group: "debts"
+  - id: "student_loans_monthly"
+    label: "Student loans"
+    type: "currency"
+    required: false
+    default: 0
+    min: 0
+    step: 10
+    helper_text: "Required monthly student loan payments."
+    group: "debts"
+  - id: "credit_card_minimums_monthly"
+    label: "Credit card minimum payments"
+    type: "currency"
+    required: false
+    default: 0
+    min: 0
+    step: 10
+    helper_text: "Use the minimum required monthly payment, not the full statement balance."
+    group: "debts"
+  - id: "personal_loans_monthly"
+    label: "Personal loan payments"
+    type: "currency"
+    required: false
+    default: 0
+    min: 0
+    step: 10
+    helper_text: "Include required monthly payments on installment or personal loans."
+    group: "debts"
+  - id: "lines_of_credit_monthly"
+    label: "Lines of credit"
+    type: "currency"
+    required: false
+    default: 0
+    min: 0
+    step: 10
+    helper_text: "Use the payment amount you want included for planning purposes."
+    group: "debts"
+  - id: "child_support_alimony_monthly"
+    label: "Child support or alimony"
+    type: "currency"
+    required: false
+    default: 0
+    min: 0
+    step: 10
+    helper_text: "Include legally required recurring support obligations."
+    group: "debts"
+  - id: "other_monthly_debt"
+    label: "Other required monthly debt payments"
+    type: "currency"
+    required: false
+    default: 0
+    min: 0
+    step: 10
+    helper_text: "Any other recurring debt payment you want counted in the ratio."
+    group: "debts"
+  - id: "use_front_end_ratio"
+    label: "Show front-end DTI"
+    type: "toggle"
+    required: false
+    default: true
+    helper_text: "Front-end DTI focuses on housing cost only."
+    group: "display"
+  - id: "use_back_end_ratio"
+    label: "Show back-end DTI as primary result"
+    type: "toggle"
+    required: false
+    default: true
+    helper_text: "Back-end DTI is the main planning answer for most users."
+    group: "display"
+
+outputs:
+  - id: "front_end_dti_percent"
+    label: "Front-end DTI"
+    format: "percent"
+    prominence: "secondary"
+  - id: "back_end_dti_percent"
+    label: "Back-end DTI"
+    format: "percent"
+    prominence: "primary"
+  - id: "total_monthly_debt_used"
+    label: "Total monthly debt used"
+    format: "currency"
+  - id: "total_monthly_income_used"
+    label: "Gross monthly income used"
+    format: "currency"
+  - id: "housing_cost_used"
+    label: "Housing cost used in the calculation"
+    format: "currency"
+  - id: "non_housing_debt_used"
+    label: "Non-housing debt used"
+    format: "currency"
+  - id: "dti_status_label"
+    label: "DTI status"
+    format: "text"
+  - id: "dti_status_explanation"
+    label: "DTI status explanation"
+    format: "text"
+  - id: "affordability_pressure_summary"
+    label: "Affordability pressure summary"
+    format: "text"
+  - id: "next_step_recommendation"
+    label: "Suggested next step"
+    format: "text"
+  - id: "base_scenario_back_end_dti"
+    label: "Base scenario back-end DTI"
+    format: "percent"
+  - id: "comparison_scenario_back_end_dti"
+    label: "Comparison scenario back-end DTI"
+    format: "percent"
+  - id: "dti_change_percent_points"
+    label: "DTI change"
+    format: "percent_points"
+  - id: "what_is_driving_your_dti"
+    label: "What is driving your DTI"
+    format: "text"
+  - id: "estimated_room_before_target_band"
+    label: "Estimated room before target band"
+    format: "currency"
+  - id: "estimated_income_needed_for_target"
+    label: "Estimated income needed for target band"
+    format: "currency"
+  - id: "estimated_debt_reduction_needed_for_target"
+    label: "Estimated debt reduction needed for target band"
+    format: "currency"
+
+result_logic_notes:
+  primary_result: "Back-end DTI is the headline answer whenever gross monthly income is entered and at least one included debt or housing amount is present."
+  minimum_viable_calculation: "The calculator must be able to run with gross monthly income plus any entered monthly debt amount. Blank optional fields count as zero."
+  housing_logic: "Front-end DTI should only appear when a housing amount is present and the user has chosen to show it. Housing cost used for front-end DTI equals proposed_housing_payment plus property_taxes_monthly plus heating_monthly plus condo_fees_monthly."
+  current_vs_proposed_logic: "Back-end DTI should include current_housing_payment only when include_current_housing is true and current_housing_payment is greater than zero. It should include proposed_housing_payment plus related housing extras only when include_proposed_housing is true and the proposed fields are populated. The experience should avoid double-counting by making it visually clear whether the user is modeling current obligations, a future scenario, or both."
+  debt_components: "Non-housing debt used is the sum of car_loans_monthly, student_loans_monthly, credit_card_minimums_monthly, personal_loans_monthly, lines_of_credit_monthly, child_support_alimony_monthly, and other_monthly_debt."
+  validation: "Negative values are invalid. Zero income is invalid and must trigger a clear validation state. Empty optional fields should be treated as zero, not as errors."
+  comparison_logic: "Scenario comparison should compare the primary back-end DTI result for the active scenario against a saved or generated comparison scenario and report the difference in percentage points."
+  educational_bands:
+    lower_stronger_range: "Back-end DTI below roughly 36 percent can be described as a lower or stronger planning range."
+    moderate_workable_range: "Back-end DTI from roughly 36 percent to 43 percent can be described as a moderate or workable planning range."
+    stretched_higher_risk_range: "Back-end DTI above roughly 43 percent can be described as a stretched or higher-risk planning range."
+  band_disclaimer: "Interpretation bands are general educational guidance only. They are not approval rules and must not be presented as lender guarantees."
+  derived_estimates: "Estimated room before target band should show how much additional monthly debt or housing cost could fit before reaching the selected educational threshold, if positive. Estimated income needed for target should show the gross monthly income required to bring the current back-end DTI to the target band. Estimated debt reduction needed for target should show the monthly debt reduction required to bring the current back-end DTI to the target band."
+
+feature_expectations:
+  instant_recalculation: true
+  beginner_friendly_defaults: true
+  simple_mode_and_advanced_mode: true
+  scenario_comparison: true
+  helpful_validation: true
+  copy_link_url_state: true
+  optional_local_scenario_save: true
+  educational_explanation_cards: true
+  related_tools_section: true
+  faq_section: true
+  methodology_section: true
+  recommended_result_layout:
+    main_answer_first: true
+    supporting_result_cards: "Show 2 to 5 supporting result cards beneath or beside the primary answer."
+    status_banner: "Display a calm status banner summarizing whether the user appears to be in a comfortable, borderline, or stretched planning range."
+    next_steps_area: "Include a what-to-do-next area with practical actions and related tool links."
+
+content:
+  intro: "Your debt-to-income ratio, or DTI, shows how much of your gross monthly income goes toward required debt payments. It is one of the simplest ways to pressure-test whether a housing payment or loan plan fits comfortably within your budget. Lenders often look at DTI when reviewing mortgage or loan applications, but borrowers can use it too as a practical planning tool before they apply. This calculator helps you estimate both front-end DTI, which focuses on housing cost, and back-end DTI, which includes housing plus other monthly debt obligations. Use it as a planning estimate to understand whether your current debt load looks manageable, borderline, or stretched before you move on to a mortgage, affordability, or budgeting decision."
+  result_explanation: "Your results show the share of your gross monthly income that is already committed to debt. A lower percentage usually means more flexibility in your budget, while a higher percentage can signal tighter cash flow and less room for a new payment. Front-end DTI looks only at housing cost, while back-end DTI includes the rest of your monthly debt obligations and is the more useful headline number for most planning decisions. Different lenders may use different formulas, debt rules, and qualifying thresholds, so this calculator should be treated as an estimate rather than a guarantee. DTI is also only one part of approval. Credit history, down payment, assets, property type, and lender policy can all matter. If you want to improve your result, the usual levers are lowering debt payments, increasing gross income, or testing a lower proposed housing payment."
+  methodology: "This calculator uses a simple monthly cash-flow ratio based on gross income. It totals the debt and housing amounts the user chooses to include, divides that total by gross monthly income, and returns the result as a percentage. Front-end DTI is shown only when housing inputs are available. Back-end DTI is always the primary answer because it reflects a fuller picture of the obligations that compete for monthly income."
+  how_to_use: "Start with your gross monthly income, then add any required monthly debt payments you want included in the ratio. If you are planning for a home purchase, turn on the proposed housing fields and enter the payment you want to test, along with property taxes, heating, and condo fees if those are relevant. Use the result as a planning estimate, then compare scenarios by adjusting the proposed housing amount or debt payments."
+  what_counts_as_debt: "DTI planning usually includes required monthly obligations such as rent or mortgage payments when relevant to the scenario, property taxes, condo fees or HOA dues, heating when part of the housing assumption, car loans, student loans, credit card minimums, personal loans, lines of credit, child support, alimony, and other recurring debt payments."
+  what_not_to_include: "DTI planning estimates usually do not include groceries, entertainment, restaurants, travel, subscriptions, savings contributions, and most discretionary spending. Utilities outside the housing assumption model also are not normally included unless you are intentionally adding them for a stricter budgeting view."
+  interpretation_notes: "A lower DTI generally suggests more breathing room, while a higher DTI suggests that debt obligations are taking a larger share of income. Educational threshold bands can help users interpret the result, but they should be framed as broad planning ranges only and never as approval promises."
+  comparison_notes: "Scenario comparison should help users answer practical questions such as how a new mortgage payment changes their back-end DTI, how paying off a car loan improves the ratio, or how much extra income would be needed to move back into a more comfortable range."
+
+faq:
+  - question: "What is a debt-to-income ratio?"
+    answer: "A debt-to-income ratio compares your required monthly debt payments with your gross monthly income before tax. It gives you a quick way to see how much of your income is already committed to obligations like housing, car loans, student loans, and credit card minimum payments."
+  - question: "How do I calculate DTI?"
+    answer: "To calculate back-end DTI, add up your required monthly debt payments and divide that total by your gross monthly income. To calculate front-end DTI, divide your monthly housing cost by your gross monthly income. This calculator does both automatically and lets you test a future housing payment too."
+  - question: "What is the difference between front-end and back-end DTI?"
+    answer: "Front-end DTI looks only at housing cost, such as a mortgage or rent plus housing-related extras you choose to include. Back-end DTI includes housing cost plus other monthly debt payments. For most borrowers, back-end DTI is the more useful overall planning ratio."
+  - question: "What is considered a good debt-to-income ratio?"
+    answer: "In general, a lower DTI is better because it leaves more room in your budget. Many people use broad planning ranges such as under 36 percent for a stronger position, around 36 to 43 percent for a workable range, and above 43 percent as more stretched. These are educational guidelines only, not lender promises."
+  - question: "Does DTI include rent?"
+    answer: "It can. If you are looking at your current obligations, rent can be included as part of your housing cost. If you are planning for a future mortgage, you might instead test a proposed housing payment and compare the result to your current situation."
+  - question: "Do credit card balances or minimum payments count in DTI?"
+    answer: "The monthly payment is what usually matters in DTI planning, not the full balance. For credit cards, the most practical input is the required minimum monthly payment because that is the amount competing for your monthly income."
+  - question: "Does DTI include utilities or groceries?"
+    answer: "Usually no. Standard DTI-style planning focuses on required debt and housing obligations, not regular living expenses like groceries, entertainment, or most utilities. Some mortgage planning models include heating as part of a housing assumption, which is why this calculator gives you the option to include it."
+  - question: "Can I qualify for a mortgage with a high DTI?"
+    answer: "Possibly, but a higher DTI can make qualification harder and reduce your margin for unexpected costs. Mortgage approval depends on more than one ratio, including credit, income stability, down payment, property details, and lender policy. This calculator is best used as a planning tool, not an approval predictor."
+  - question: "How can I lower my debt-to-income ratio?"
+    answer: "The main ways to lower DTI are to pay down monthly debt obligations, increase gross income, or choose a lower housing payment. Even small changes to a car loan, credit card minimum, or proposed mortgage payment can meaningfully improve the result."
+  - question: "Is this DTI calculator accurate?"
+    answer: "It is accurate for the inputs and assumptions you provide, but it is still an estimate. Real lenders may calculate debt differently, count certain obligations in their own way, or use additional rules that are not captured in a general planning calculator."
+
+related_tools:
+  - "house-affordability-calculator"
+  - "mortgage-calculator"
+  - "canadian-take-home-pay-calculator"
+  - "budget-planner"
+  - "debt-payoff-calculator"
+  - "rent-vs-buy-calculator"
+  - "net-worth-calculator"
+
+disclaimer: "This debt-to-income ratio calculator provides general planning estimates only. It does not guarantee mortgage approval, loan approval, or borrowing capacity, and it may not reflect every lender's rules, qualifying ratios, or underwriting assumptions. Results depend on the accuracy of your inputs and the assumptions used in the scenario. This tool is educational and should not be treated as legal, tax, or financial advice."
+
+implementation_notes:
+  - "Prioritize back-end DTI as the main headline result and status banner."
+  - "Show front-end DTI only when housing details are entered and the user has chosen to display it."
+  - "Support both renters and buyers by allowing current housing, proposed housing, or both to be modeled."
+  - "Make scenario testing central to the experience so users can quickly compare a lower or higher housing payment."
+  - "Use a simple mode with only core fields first, then reveal advanced housing and debt details progressively."
+  - "Keep the design aligned with SimpleKit's calm editorial style and shared shell structure."
+  - "Ensure explanatory content, FAQs, and methodology remain crawlable in HTML for SEO."
+  - "Avoid framework-specific assumptions unless the existing template already uses them."
+  - "Keep the tool static-site friendly with client-side enhancement only."
+  - "Include accessible labels, descriptive helper text, keyboard-friendly controls, and aria-live summaries for result updates."
+  - "Maintain shared SimpleKit shell integration, analytics snippet, head structure, and internal related-tool linking patterns."
